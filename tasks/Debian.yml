@@ -26,3 +26,8 @@
     repo: "deb https://debian.neo4j.org/repo stable/"
     state: present
     update_cache: true
+
+- name: Install cypher-shell 1.1.12
+  package:
+    name: cypher-shell=1.1.12
+    state: present
