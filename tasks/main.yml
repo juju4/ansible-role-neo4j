@@ -38,129 +38,69 @@
     group: "{{ neo4j_group }}"
     mode: 0755
 
-- name: Gather package facts
-  ansible.builtin.package_facts:
-    manager: auto
-
-- name: Get neo4j version
-  ansible.builtin.set_fact:
-    neo4j_v: "{{ ansible_facts.packages[neo4j_package][0]['version'] | regex_replace('^1:', '') }}"
-
-# https://neo4j.com/docs/upgrade-migration-guide/current/version-5/changelogs/configuration-settings/
-# https://neo4j.com/docs/operations-manual/5/reference/configuration-settings/
-# https://neo4j.com/docs/upgrade-migration-guide/current/version-4/changelogs/configuration-settings/
-# https://neo4j.com/docs/operations-manual/4.4/reference/configuration-settings/
-# https://neo4j.com/docs/operations-manual/3.5/reference/configuration-settings/
-- name: Set neo4j config - replacements
-  when:
-    - not neo4j_conf_template|string
-  block:
-    - name: Set the neo4j data directory
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^dbms\.directories\.data=.*'
-        line: "dbms.directories.data={{ neo4j_server_database_location }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('5', '<')
-
-    - name: Set the neo4j heap inital size
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^dbms\.memory\.heap\.initial_size=.*'
-        line: "dbms.memory.heap.initial_size={{ neo4j_memory_heap_initial_size }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('5', '<')
-
-    - name: Set the neo4j heap max size
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^dbms\.memory\.heap\.max_size=.*'
-        line: "dbms.memory.heap.max_size={{ neo4j_memory_heap_max_size }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('5', '<')
-
-    - name: Set the neo4j pagecache size
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^dbms\.memory\.pagecache\.size=.*'
-        line: "dbms.memory.pagecache.size={{ neo4j_memory_pagecache_size }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('5', '<')
-
-    - name: Allow any connection to Neo4J
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^(# )?dbms.connectors.default_listen_address=0.0.0.0'
-        line: "dbms.connectors.default_listen_address=0.0.0.0"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_allow_any_connection | bool
-        - neo4j_v is version('4', '<')
-
-    - name: Set the neo4j bolt listen address
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^dbms\.connector\.bolt\.listen_address=.*'
-        line: "dbms.connector.bolt.listen_address={{ neo4j_connector_bolt_listen_address }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('4', '<')
-
-    - name: Set the neo4j http listen address
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^dbms\.connector\.http\.listen_address=.*'
-        line: "dbms.connector.http.listen_address={{ neo4j_connector_http_listen_address }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('4', '<')
-
-    - name: Set the neo4j https listen address
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^dbms\.connector\.https\.listen_address=.*'
-        line: "dbms.connector.https.listen_address={{ neo4j_connector_https_listen_address }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('4', '<')
-
-    - name: Enable prometheus metrics
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^metrics\.prometheus\.enabled=.*'
-        line: "metrics.prometheus.enabled={{ neo4j_prometheus_metrics_enabled }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('5', '<')
-
-    - name: Set prometheus metrics interface
-      ansible.builtin.lineinfile:
-        dest: /etc/neo4j/neo4j.conf
-        regexp: '^metrics\.prometheus\.endpoint=.*'
-        line: "metrics.prometheus.endpoint={{ neo4j_prometheus_metrics_endpoint }}"
-        state: present
-      notify: Restart Neo4j
-      when:
-        - neo4j_v is version('5', '<')
-
-- name: Set the neo4j config
-  ansible.builtin.template:
-    src: "{{ neo4j_conf_template }}"
+- name: Set the neo4j data directory
+  ansible.builtin.lineinfile:
     dest: /etc/neo4j/neo4j.conf
-    mode: '0644'
+    regexp: '^server\.directories\.data=.*'
+    line: "server.directories.data={{ neo4j_server_database_location }}"
+    state: present
+  notify: Restart Neo4j
+
+- name: Set the neo4j heap inital size
+  ansible.builtin.lineinfile:
+    dest: /etc/neo4j/neo4j.conf
+    regexp: '^server\.memory\.heap\.initial_size=.*'
+    line: "server.memory.heap.initial_size={{ neo4j_memory_heap_initial_size }}"
+    state: present
+  notify: Restart Neo4j
+
+- name: Set the neo4j heap max size
+  ansible.builtin.lineinfile:
+    dest: /etc/neo4j/neo4j.conf
+    regexp: '^server\.memory\.heap\.max_size=.*'
+    line: "server.memory.heap.max_size={{ neo4j_memory_heap_max_size }}"
+    state: present
+  notify: Restart Neo4j
+
+- name: Set the neo4j pagecache size
+  ansible.builtin.lineinfile:
+    dest: /etc/neo4j/neo4j.conf
+    regexp: '^server\.memory\.pagecache\.size=.*'
+    line: "server.memory.pagecache.size={{ neo4j_memory_pagecache_size }}"
+    state: present
+  notify: Restart Neo4j
+
+- name: Allow any connection to Neo4J
+  ansible.builtin.lineinfile:
+    dest: /etc/neo4j/neo4j.conf
+    regexp: '^(# )?server.default_listen_address=0.0.0.0'
+    line: "server.default_listen_address=0.0.0.0"
+    state: present
+  when: neo4j_allow_any_connection | bool
+  notify: Restart Neo4j
+
+- name: Set the neo4j bolt listen address
+  ansible.builtin.lineinfile:
+    dest: /etc/neo4j/neo4j.conf
+    regexp: '^server\.bolt\.listen_address=.*'
+    line: "server.bolt.listen_address={{ neo4j_connector_bolt_listen_address }}"
+    state: present
+  notify: Restart Neo4j
+
+- name: Set the neo4j http listen address
+  ansible.builtin.lineinfile:
+    dest: /etc/neo4j/neo4j.conf
+    regexp: '^server\.http\.listen_address=.*'
+    line: "server.http.listen_address={{ neo4j_connector_http_listen_address }}"
+    state: present
+  notify: Restart Neo4j
+
+- name: Set the neo4j https listen address
+  ansible.builtin.lineinfile:
+    dest: /etc/neo4j/neo4j.conf
+    regexp: '^server\.https\.listen_address=.*'
+    line: "server.https.listen_address={{ neo4j_connector_https_listen_address }}"
+    state: present
   notify: Restart Neo4j
   when:
     - neo4j_conf_template|string
@@ -189,22 +129,9 @@
     - not is_container|bool
 
 # https://neo4j.com/docs/operations-manual/current/configuration/set-initial-password/
-- name: Set Neo4j initial password - v4
-  ansible.builtin.command: "neo4j-admin set-initial-password '{{ neo4j_password }}'"
+- name: Set Neo4j initial password
+  ansible.builtin.command: "neo4j-admin{% if neo4j_version is defined and neo4j_version.split('.')[0] == '5'%} dbms{% else %} {% endif %} set-initial-password '{{ neo4j_password }}'"
   args:
     creates: /var/lib/neo4j/data/dbms/auth.ini
-  when:
-    - neo4j_password is defined
-    - neo4j_password | string
-    - not is_container|bool
-    - neo4j_v is version('5', '<')
-
-- name: Set Neo4j initial password - v5
-  ansible.builtin.command: "neo4j-admin dbms set-initial-password '{{ neo4j_password }}'"
-  args:
-    creates: /var/lib/neo4j/data/dbms/auth.ini
-  when:
-    - neo4j_password is defined
-    - neo4j_password | string
-    - not is_container|bool
-    - neo4j_v is version('5', '>=')
+  when: neo4j_password is defined and neo4j_password | length > 0
+  no_log: True
