@@ -118,5 +118,5 @@
   ansible.builtin.command: "neo4j-admin{% if neo4j_version is defined and neo4j_version.split('.')[0] == '5'%} dbms{% else %} {% endif %} set-initial-password '{{ neo4j_password }}'"
   args:
     creates: /var/lib/neo4j/data/dbms/auth.ini
-  when: neo4j_password is defined and neo4j_password|string
+  when: neo4j_password is defined and neo4j_password | length > 0
   no_log: True
