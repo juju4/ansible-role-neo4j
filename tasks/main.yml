@@ -132,4 +132,4 @@
   args:
     creates: /var/lib/neo4j/data/dbms/auth.ini
   when: neo4j_password is defined and neo4j_password | length > 0
-  no_log: True
+  no_log: neo4j_no_log | bool

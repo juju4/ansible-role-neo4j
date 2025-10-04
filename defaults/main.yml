@@ -25,4 +25,5 @@ neo4j_java_remove:
   - openjdk-11-jdk
   - openjdk-11-jdk-headless
 
+neo4j_no_log: true
 is_container: false
