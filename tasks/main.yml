@@ -36,7 +36,7 @@
     state: directory
     owner: neo4j
     group: "{{ neo4j_group }}"
-    mode: 0755
+    mode: '0755'
 
 - name: Set the neo4j data directory
   ansible.builtin.lineinfile:
@@ -109,7 +109,7 @@
     dest: /etc/security/limits.d/neo4j.conf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Ensure pam_limits.so is enabled
   ansible.builtin.lineinfile:
@@ -128,8 +128,8 @@
 
 # https://neo4j.com/docs/operations-manual/current/configuration/set-initial-password/
 - name: Set Neo4j initial password
-  ansible.builtin.command: "neo4j-admin{% if neo4j_version is defined and neo4j_version.split('.')[0] == '5'%} dbms{% else %} {% endif %} set-initial-password '{{ neo4j_password }}'"
+  ansible.builtin.command: "neo4j-admin{% if neo4j_version is defined and neo4j_version.split('.')[0] == '5' %} dbms{% else %} {% endif %} set-initial-password '{{ neo4j_password }}'"
   args:
     creates: /var/lib/neo4j/data/dbms/auth.ini
   when: neo4j_password is defined and neo4j_password | length > 0
-  no_log: neo4j_no_log | bool
+  no_log: "{{ neo4j_no_log | bool }}"

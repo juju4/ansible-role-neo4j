@@ -6,6 +6,6 @@
     name: neo4j
     state: restarted
   become: true
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   when:
     - not is_container|bool
