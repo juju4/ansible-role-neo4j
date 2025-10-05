@@ -10,7 +10,7 @@
   ansible.builtin.yum_repository:
     name: neo4j
     description: Neo4j Yum Repo
-    baseurl: https://yum.neo4j.com/stable
+    baseurl: https://yum.neo4j.com/stable/latest
     gpgkey: https://debian.neo4j.com/neotechnology.gpg.key
     gpgcheck: true
 
