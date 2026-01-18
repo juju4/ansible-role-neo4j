@@ -7,5 +7,10 @@
     neo4j_allow_any_connection: true
     neo4j_memory_pagecache_size: 1g
     neo4j_password: 'neo4j1234'
+  pre_tasks:
+    - name: Debian-13 | Set fact
+      ansible.builtin.set_fact:
+        neo4j_java:
+          - openjdk-21-jdk
   roles:
     - role: kevincoakley.neo4j
