@@ -34,9 +34,9 @@
     name: neo4j
     types: deb
     uris: "https://debian.neo4j.com/"
-    suites: "{% if neo4j_version is defined %}{{ neo4j_version.split('.')[0] }}{% else %}latest{% endif %}"
+    suites: stable
     components:
-      - stable
+      - "{% if neo4j_version is defined %}{{ neo4j_version.split('.')[0] }}{% else %}latest{% endif %}"
     signed_by: https://debian.neo4j.com/neotechnology.gpg.key
   notify:
     - Update apt cache
