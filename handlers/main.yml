@@ -1,6 +1,10 @@
 ---
 # handlers file for neo4j
 
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
 - name: Restart Neo4j
   ansible.builtin.service:
     name: neo4j

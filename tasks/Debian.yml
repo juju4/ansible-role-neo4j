@@ -28,18 +28,21 @@
     state: absent
   loop: "{{ neo4j_java_remove }}"
 
-- name: Import the signing key for the Neo Technology Debian repository for Neo4j
-  ansible.builtin.apt_key:
-    url: https://debian.neo4j.com/neotechnology.gpg.key
-    state: present
-    validate_certs: "{{ neo4j_apt_key_validate_certs }}"
-
-- name: Add the Neo Technology Debian repository for Neo4j
-  ansible.builtin.apt_repository:
-    repo: "deb https://debian.neo4j.com stable {% if neo4j_version is defined %}{{ neo4j_version.split('.')[0] }}{% else %}latest{% endif %}"
-    state: present
-    update_cache: true
+- name: Add Microsoft apt repository for MDATP
+  ansible.builtin.deb822_repository:
+    name: "{% if neo4j_version is defined %}{{ neo4j_version.split('.')[0] }}{% else %}latest{% endif %}"
+    types: deb
+    uris: "https://debian.neo4j.com/"
+    suites: stable
+    components:
+      - main
+    signed_by: https://debian.neo4j.com/neotechnology.gpg.key
+  notify:
+    - Update apt cache
 
 - name: Determine the neo4j package to install
   ansible.builtin.set_fact:
     neo4j_package: neo4j{% if neo4j_edition == 'enterprise' %}-enterprise{% endif %}{% if neo4j_version is defined %}=1:{{ neo4j_version }}{% endif %}
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
