@@ -21,6 +21,7 @@
     - "{{ neo4j_java }}"
     - apt-transport-https
     - gpg-agent
+    - python3-debian
 
 - name: Ensure conflicting java packages are not present
   ansible.builtin.package:
@@ -28,7 +29,7 @@
     state: absent
   loop: "{{ neo4j_java_remove }}"
 
-- name: Add Microsoft apt repository for MDATP
+- name: Add Neo4j apt repository
   ansible.builtin.deb822_repository:
     name: "{% if neo4j_version is defined %}{{ neo4j_version.split('.')[0] }}{% else %}latest{% endif %}"
     types: deb
