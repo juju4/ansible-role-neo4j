@@ -21,10 +21,10 @@ jobs:
       matrix:
         include:
           - molecule_distro: 'rockylinux10'
-            experimental: false
+            experimental: true
             suite: default
           - molecule_distro: 'rockylinux9'
-            experimental: false
+            experimental: true
             suite: default
           - molecule_distro: 'ubuntu2404'
             experimental: false
