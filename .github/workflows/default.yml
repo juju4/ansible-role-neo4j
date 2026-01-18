@@ -20,19 +20,19 @@ jobs:
       max-parallel: 4
       matrix:
         include:
-          - molecule_distro: 'docker-rockylinux10-ansible'
+          - molecule_distro: 'rockylinux10'
             experimental: false
             suite: default
-          - molecule_distro: 'docker-rockylinux9-ansible'
+          - molecule_distro: 'rockylinux9'
             experimental: false
             suite: default
-          - molecule_distro: 'docker-ubuntu2404-ansible'
+          - molecule_distro: 'ubuntu2404'
             experimental: false
             suite: default
-          - molecule_distro: 'docker-ubuntu2204-ansible'
+          - molecule_distro: 'ubuntu2204'
             experimental: false
             suite: default
-          - molecule_distro: 'docker-debian13-ansible'
+          - molecule_distro: 'debian13'
             experimental: false
             suite: default
     env:
