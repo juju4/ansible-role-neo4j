@@ -31,12 +31,12 @@
 
 - name: Add Neo4j apt repository
   ansible.builtin.deb822_repository:
-    name: "{% if neo4j_version is defined %}{{ neo4j_version.split('.')[0] }}{% else %}latest{% endif %}"
+    name: neo4j
     types: deb
     uris: "https://debian.neo4j.com/"
-    suites: stable
+    suites: "{% if neo4j_version is defined %}{{ neo4j_version.split('.')[0] }}{% else %}latest{% endif %}"
     components:
-      - main
+      - stable
     signed_by: https://debian.neo4j.com/neotechnology.gpg.key
   notify:
     - Update apt cache
